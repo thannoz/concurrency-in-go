@@ -31,7 +31,7 @@ import (
 )
 
 var seatingCapacity = 10
-var arrivalRate = 10
+var arrivalRate = 100
 var cutDuration = 1000 * time.Millisecond
 var timeOpen = 10 * time.Second
 
@@ -84,7 +84,6 @@ func main() {
 		for {
 			// get an average number with average arrival rate
 			randomMilliseconds := rand.Int() % (2 * arrivalRate)
-			fmt.Println("random milliseconds:", randomMilliseconds)
 			select {
 			case <-shopClosing:
 				return
@@ -97,4 +96,5 @@ func main() {
 
 	// block until the barbershop is closed
 	<-closed
+	close(closed)
 }
