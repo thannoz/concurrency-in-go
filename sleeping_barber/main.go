@@ -23,6 +23,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -60,6 +61,11 @@ func main() {
 
 	// add barbers
 	shop.addBarber("Carlos")
+	shop.addBarber("Konzo")
+	shop.addBarber("Kalonji")
+	shop.addBarber("Jason")
+	shop.addBarber("Justin")
+	shop.addBarber("Jaden")
 
 	// start the barbershop as a goroutine
 	shopClosing := make(chan bool)
@@ -73,7 +79,22 @@ func main() {
 	}()
 
 	// add clients
+	i := 1
+	go func() {
+		for {
+			// get an average number with average arrival rate
+			randomMilliseconds := rand.Int() % (2 * arrivalRate)
+			fmt.Println("random milliseconds:", randomMilliseconds)
+			select {
+			case <-shopClosing:
+				return
+			case <-time.After(time.Millisecond * time.Duration(randomMilliseconds)):
+				shop.addClient(fmt.Sprintf("Client #%d", i))
+				i++
+			}
+		}
+	}()
 
 	// block until the barbershop is closed
-	time.Sleep(5 * time.Second)
+	<-closed
 }
